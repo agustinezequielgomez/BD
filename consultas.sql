@@ -48,3 +48,33 @@ INSERT INTO proveedores VALUES (107, 'Rosales', null, 'Wilde');
 
 -------------------------------------------------- DML VENTAS ----------------------------------------
 --1
+SELECT MAX(cantidad) 
+FROM item_ventas;
+--2
+SELECT SUM(iv.cantidad) 
+FROM item_ventas iv 
+INNER JOIN productos prod 
+ON iv.codigo_producto = prod.codigo_producto 
+WHERE prod.nombre_producto = 'Kiwi';
+--3
+SELECT prod.nombre_producto as Producto, SUM(iv.cantidad) as Cantidad 
+FROM productos prod 
+INNER JOIN item_ventas iv 
+ON prod.codigo_producto = iv.codigo_producto 
+GROUP BY prod.nombre_producto 
+ORDER BY SUM(iv.cantidad) DESC;
+--4
+SELECT prod.nombre_producto as Producto, SUM(iv.cantidad) as Cantidad 
+FROM productos prod 
+INNER JOIN item_ventas iv 
+ON prod.codigo_producto = iv.codigo_producto 
+GROUP BY prod.nombre_producto 
+HAVING SUM(iv.cantidad) > 30 
+ORDER BY prod.nombre_producto DESC;
+--5
+SELECT cli.nombre as Nombre, cli.codigo_cliente as Codigo_cliente, COUNT(ven.numero_factura) as Cantidad_compras 
+FROM clientes cli 
+INNER JOIN ventas ven 
+ON cli.codigo_cliente = ven.codigo_cliente 
+GROUP BY cli.nombre;
+--6

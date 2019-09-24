@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 17-09-2019 a las 03:05:17
+-- Tiempo de generación: 24-09-2019 a las 05:43:20
 -- Versión del servidor: 10.1.38-MariaDB
--- Versión de PHP: 7.3.2
+-- Versión de PHP: 7.3.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -80,10 +80,27 @@ CREATE TABLE `item_ventas` (
 
 INSERT INTO `item_ventas` (`numero_factura`, `codigo_producto`, `cantidad`, `precio`) VALUES
 (7, 5, 98, 414),
+(8, 20, 51, 34),
+(12, 8, 72, 18),
+(13, 20, 44, 2),
+(16, 20, 44, 2),
+(17, 33, 58, 79),
+(20, 1, 41, 49),
 (21, 2, 171, 35),
 (22, 1, 58, 906),
 (23, 1, 58, 906),
+(24, 32, 68, 52),
+(26, 39, 33, 62),
 (29, 4, 156, 674),
+(35, 25, 8, 50),
+(38, 9, 29, 32),
+(39, 16, 73, 80),
+(41, 39, 89, 32),
+(42, 39, 89, 32),
+(43, 39, 89, 32),
+(44, 16, 68, 26),
+(45, 29, 15, 2),
+(47, 39, 89, 32),
 (48, 3, 84, 588);
 
 -- --------------------------------------------------------
@@ -136,6 +153,33 @@ CREATE TABLE `ventas` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
+-- Volcado de datos para la tabla `ventas`
+--
+
+INSERT INTO `ventas` (`numero_factura`, `codigo_cliente`, `fecha`) VALUES
+(8, 362, '2019-03-07'),
+(35, 519, '2019-01-16'),
+(24, 563, '2019-03-09'),
+(17, 698, '2019-01-16'),
+(21, 699, '2018-11-24'),
+(43, 755, '2018-10-17'),
+(7, 816, '2019-04-01'),
+(29, 1010, '2019-09-19'),
+(13, 1083, '2019-03-05'),
+(38, 1101, '2019-01-31'),
+(16, 1128, '2019-07-12'),
+(39, 1178, '2019-01-21'),
+(42, 1232, '2019-03-11'),
+(44, 1264, '2018-10-10'),
+(23, 1353, '2019-04-07'),
+(26, 1681, '2018-10-06'),
+(48, 1729, '2018-11-01'),
+(20, 1747, '2019-06-04'),
+(12, 1950, '2019-06-23'),
+(41, 1965, '2019-09-19'),
+(35, 362, '0000-00-00');
+
+--
 -- Índices para tablas volcadas
 --
 
@@ -162,7 +206,8 @@ ALTER TABLE `productos`
 -- Indices de la tabla `ventas`
 --
 ALTER TABLE `ventas`
-  ADD KEY `codigo_cliente` (`codigo_cliente`);
+  ADD KEY `codigo_cliente` (`codigo_cliente`),
+  ADD KEY `FK_num_factura` (`numero_factura`);
 
 --
 -- Restricciones para tablas volcadas
@@ -178,6 +223,7 @@ ALTER TABLE `item_ventas`
 -- Filtros para la tabla `ventas`
 --
 ALTER TABLE `ventas`
+  ADD CONSTRAINT `FK_num_factura` FOREIGN KEY (`numero_factura`) REFERENCES `item_ventas` (`numero_factura`),
   ADD CONSTRAINT `ventas_ibfk_1` FOREIGN KEY (`codigo_cliente`) REFERENCES `clientes` (`codigo_cliente`);
 COMMIT;
 
