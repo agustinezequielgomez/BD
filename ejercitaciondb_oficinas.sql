@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 24-09-2019 a las 05:43:55
+-- Tiempo de generación: 30-09-2019 a las 05:50:30
 -- Versión del servidor: 10.1.38-MariaDB
 -- Versión de PHP: 7.3.3
 
@@ -21,6 +21,18 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `ejercitaciondb_oficinas`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `clientes`
+--
+
+CREATE TABLE `clientes` (
+  `cod_cliente` int(11) NOT NULL DEFAULT '0',
+  `cod_lista` int(11) DEFAULT NULL,
+  `razon_social` varchar(255) COLLATE utf8_spanish2_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
 -- --------------------------------------------------------
 
@@ -43,6 +55,19 @@ INSERT INTO `datos_contratos` (`cod_empleado`, `fecha_contrato`, `cuota`, `venta
 (132, '0000-00-00', 6, 1),
 (152, '0000-00-00', 2, 11),
 (234, '0000-00-00', 4, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `detalle_pedidos`
+--
+
+CREATE TABLE `detalle_pedidos` (
+  `cod_pedido` int(11) DEFAULT NULL,
+  `numero_linea` int(11) DEFAULT NULL,
+  `cod_producto` int(11) DEFAULT NULL,
+  `cantidad` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
 -- --------------------------------------------------------
 
@@ -156,12 +181,46 @@ INSERT INTO `oficinas` (`cod_oficina`, `codigo_director`, `descripcion`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `pedidos`
+--
+
+CREATE TABLE `pedidos` (
+  `cod_pedido` int(11) NOT NULL,
+  `fecha_pedido` datetime DEFAULT NULL,
+  `cod_empleado` int(11) NOT NULL,
+  `cod_cliente` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `precios`
+--
+
+CREATE TABLE `precios` (
+  `cod_producto` int(11) NOT NULL,
+  `cod_lista` int(11) NOT NULL,
+  `precio` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `precios`
+--
+
+INSERT INTO `precios` (`cod_producto`, `cod_lista`, `precio`) VALUES
+(2, 26, 1500),
+(5, 23, 5632),
+(5, 34, 1300);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `productos`
 --
 
 CREATE TABLE `productos` (
   `cod_producto` int(11) NOT NULL,
-  `dsecripcion` varchar(20) COLLATE utf8_spanish2_ci DEFAULT NULL,
+  `descripcion` varchar(20) COLLATE utf8_spanish2_ci DEFAULT NULL,
   `precio` float DEFAULT NULL,
   `cantidad_stock` int(11) DEFAULT NULL,
   `punto_reposicion` varchar(30) COLLATE utf8_spanish2_ci DEFAULT NULL,
@@ -169,14 +228,39 @@ CREATE TABLE `productos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
 --
+-- Volcado de datos para la tabla `productos`
+--
+
+INSERT INTO `productos` (`cod_producto`, `descripcion`, `precio`, `cantidad_stock`, `punto_reposicion`, `cod_fabricante`) VALUES
+(1, 'Sauce - Cranberry', 37.5, 29, '69', 25),
+(2, 'Bread - Bagels, Mini', 96.16, 38, '33', 256),
+(3, 'Tray - Foam, Square ', 78.76, 73, '36', 256),
+(4, 'Pie Filling - Pumpki', 27.55, 22, '43', 25),
+(5, 'Bread - Roll, Italia', 49.9, 45, '95', 25);
+
+--
 -- Índices para tablas volcadas
 --
+
+--
+-- Indices de la tabla `clientes`
+--
+ALTER TABLE `clientes`
+  ADD PRIMARY KEY (`cod_cliente`),
+  ADD KEY `FK_clientes_lista` (`cod_lista`);
 
 --
 -- Indices de la tabla `datos_contratos`
 --
 ALTER TABLE `datos_contratos`
   ADD KEY `cod_empleado` (`cod_empleado`);
+
+--
+-- Indices de la tabla `detalle_pedidos`
+--
+ALTER TABLE `detalle_pedidos`
+  ADD KEY `FK_DP_Pedido` (`cod_pedido`),
+  ADD KEY `FK_DP_Producto` (`cod_producto`);
 
 --
 -- Indices de la tabla `documentos`
@@ -211,6 +295,21 @@ ALTER TABLE `oficinas`
   ADD PRIMARY KEY (`cod_oficina`);
 
 --
+-- Indices de la tabla `pedidos`
+--
+ALTER TABLE `pedidos`
+  ADD PRIMARY KEY (`cod_pedido`),
+  ADD KEY `FK_pedido_empleado` (`cod_empleado`),
+  ADD KEY `FK_Pedidos_Cliente` (`cod_cliente`);
+
+--
+-- Indices de la tabla `precios`
+--
+ALTER TABLE `precios`
+  ADD PRIMARY KEY (`cod_producto`,`cod_lista`,`precio`),
+  ADD KEY `FK_Lista` (`cod_lista`);
+
+--
 -- Indices de la tabla `productos`
 --
 ALTER TABLE `productos`
@@ -222,10 +321,23 @@ ALTER TABLE `productos`
 --
 
 --
+-- Filtros para la tabla `clientes`
+--
+ALTER TABLE `clientes`
+  ADD CONSTRAINT `FK_clientes_lista` FOREIGN KEY (`cod_lista`) REFERENCES `listas` (`cod_listas`);
+
+--
 -- Filtros para la tabla `datos_contratos`
 --
 ALTER TABLE `datos_contratos`
   ADD CONSTRAINT `datos_contratos_ibfk_1` FOREIGN KEY (`cod_empleado`) REFERENCES `empleados` (`cod_empleado`);
+
+--
+-- Filtros para la tabla `detalle_pedidos`
+--
+ALTER TABLE `detalle_pedidos`
+  ADD CONSTRAINT `FK_DP_Pedido` FOREIGN KEY (`cod_pedido`) REFERENCES `pedidos` (`cod_pedido`),
+  ADD CONSTRAINT `FK_DP_Producto` FOREIGN KEY (`cod_producto`) REFERENCES `productos` (`cod_producto`);
 
 --
 -- Filtros para la tabla `empleados`
@@ -233,6 +345,20 @@ ALTER TABLE `datos_contratos`
 ALTER TABLE `empleados`
   ADD CONSTRAINT `empleados_ibfk_1` FOREIGN KEY (`cod_oficina`) REFERENCES `oficinas` (`cod_oficina`),
   ADD CONSTRAINT `empleados_ibfk_2` FOREIGN KEY (`cod_documento`) REFERENCES `documentos` (`cod_documento`);
+
+--
+-- Filtros para la tabla `pedidos`
+--
+ALTER TABLE `pedidos`
+  ADD CONSTRAINT `FK_Pedidos_Cliente` FOREIGN KEY (`cod_cliente`) REFERENCES `clientes` (`cod_cliente`),
+  ADD CONSTRAINT `FK_pedido_empleado` FOREIGN KEY (`cod_empleado`) REFERENCES `empleados` (`cod_empleado`);
+
+--
+-- Filtros para la tabla `precios`
+--
+ALTER TABLE `precios`
+  ADD CONSTRAINT `FK_Lista` FOREIGN KEY (`cod_lista`) REFERENCES `listas` (`cod_listas`),
+  ADD CONSTRAINT `FK_Producto` FOREIGN KEY (`cod_producto`) REFERENCES `productos` (`cod_producto`);
 
 --
 -- Filtros para la tabla `productos`
