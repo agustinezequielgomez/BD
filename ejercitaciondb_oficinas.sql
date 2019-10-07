@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-09-2019 a las 05:50:30
+-- Tiempo de generación: 07-10-2019 a las 21:53:03
 -- Versión del servidor: 10.1.38-MariaDB
 -- Versión de PHP: 7.3.3
 
@@ -34,6 +34,19 @@ CREATE TABLE `clientes` (
   `razon_social` varchar(255) COLLATE utf8_spanish2_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
+--
+-- Volcado de datos para la tabla `clientes`
+--
+
+INSERT INTO `clientes` (`cod_cliente`, `cod_lista`, `razon_social`) VALUES
+(50, 34, 'Alta empresa SA'),
+(63, 26, 'Testing stuff'),
+(76, 23, 'La Anonima SRL'),
+(181, 7785, 'le mayoriste 3'),
+(3369, 34, 'Le testing SA'),
+(5596, 7785, 'mayorista1'),
+(6698, 7785, 'El mayorista');
+
 -- --------------------------------------------------------
 
 --
@@ -52,8 +65,8 @@ CREATE TABLE `datos_contratos` (
 --
 
 INSERT INTO `datos_contratos` (`cod_empleado`, `fecha_contrato`, `cuota`, `ventas`) VALUES
-(132, '0000-00-00', 6, 1),
-(152, '0000-00-00', 2, 11),
+(132, '1995-10-03', 6, 1),
+(152, '2010-12-11', 2, 11),
 (234, '0000-00-00', 4, 2);
 
 -- --------------------------------------------------------
@@ -68,6 +81,18 @@ CREATE TABLE `detalle_pedidos` (
   `cod_producto` int(11) DEFAULT NULL,
   `cantidad` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `detalle_pedidos`
+--
+
+INSERT INTO `detalle_pedidos` (`cod_pedido`, `numero_linea`, `cod_producto`, `cantidad`) VALUES
+(326, 44556698, 1, 500),
+(499, 5556898, 2, 205),
+(996, 55489, 3, 1000),
+(6695, 23, 3, 500),
+(6696, 659, 3, 1500),
+(2232, 123, 5, 15000);
 
 -- --------------------------------------------------------
 
@@ -110,9 +135,11 @@ CREATE TABLE `empleados` (
 --
 
 INSERT INTO `empleados` (`cod_empleado`, `apellido`, `nombre`, `fecha_nacimiento`, `num_doc`, `cod_jefe`, `cod_oficina`, `cod_documento`) VALUES
-(132, 'Vargas', 'Selene', '0000-00-00', 4122342, 252, 3, 22),
-(152, 'Gomez', 'Agustin', '0000-00-00', 42147544, 233, 1, 22),
-(234, 'Gonzalez', 'Camila', '0000-00-00', 41555698, 443, 2, 22);
+(132, 'Vargas', 'Selene', '1995-10-10', 4122342, 252, 3, 22),
+(152, 'Gomez', 'Agustin', '1999-10-09', 42147544, 233, 1, 22),
+(234, 'Gonzalez', 'Camila', '1999-09-10', 41555698, NULL, 2, 22),
+(559, 'Rosales', 'Maria', '1966-10-23', 232365, 669, 6, 669631),
+(998, 'Martinez', 'Maria Luisa', '2019-10-05', 666599, 245, 3, 22);
 
 -- --------------------------------------------------------
 
@@ -152,7 +179,8 @@ CREATE TABLE `listas` (
 INSERT INTO `listas` (`cod_listas`, `descripcion`, `ganancia`) VALUES
 (23, 'Lista de prductos', 2330),
 (26, 'Lista de proveedores', 3234),
-(34, 'Lista de clientes', 6000);
+(34, 'Lista de clientes', 6000),
+(7785, 'mayoristas', NULL);
 
 -- --------------------------------------------------------
 
@@ -176,7 +204,8 @@ INSERT INTO `oficinas` (`cod_oficina`, `codigo_director`, `descripcion`) VALUES
 (3, 93, 'Sistemas'),
 (4, 64, 'Soporte'),
 (5, 45, 'Infraestructura'),
-(6, 73, 'Seguridad');
+(6, 73, 'Seguridad'),
+(9894, NULL, 'Limpieza');
 
 -- --------------------------------------------------------
 
@@ -190,6 +219,19 @@ CREATE TABLE `pedidos` (
   `cod_empleado` int(11) NOT NULL,
   `cod_cliente` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `pedidos`
+--
+
+INSERT INTO `pedidos` (`cod_pedido`, `fecha_pedido`, `cod_empleado`, `cod_cliente`) VALUES
+(326, '2019-10-05 18:45:07', 234, 76),
+(499, '2019-10-05 18:45:07', 132, 50),
+(996, '2019-03-13 18:45:07', 152, 63),
+(2232, '2019-04-10 00:00:00', 234, 3369),
+(2918, '2018-04-19 00:00:00', 234, 3369),
+(6695, '2019-03-29 00:00:00', 559, 3369),
+(6696, '2019-03-29 00:00:00', 559, 3369);
 
 -- --------------------------------------------------------
 
@@ -232,7 +274,7 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`cod_producto`, `descripcion`, `precio`, `cantidad_stock`, `punto_reposicion`, `cod_fabricante`) VALUES
-(1, 'Sauce - Cranberry', 37.5, 29, '69', 25),
+(1, 'Sauce - Cranberry', 37.5, 29, '69', 256),
 (2, 'Bread - Bagels, Mini', 96.16, 38, '33', 256),
 (3, 'Tray - Foam, Square ', 78.76, 73, '36', 256),
 (4, 'Pie Filling - Pumpki', 27.55, 22, '43', 25),
@@ -253,6 +295,7 @@ ALTER TABLE `clientes`
 -- Indices de la tabla `datos_contratos`
 --
 ALTER TABLE `datos_contratos`
+  ADD UNIQUE KEY `UQ_TEST` (`ventas`),
   ADD KEY `cod_empleado` (`cod_empleado`);
 
 --
